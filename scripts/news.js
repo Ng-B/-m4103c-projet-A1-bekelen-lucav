@@ -53,7 +53,6 @@ let array_recherches_in_json = JSON.stringify(recherches);
 setCookie("recherches",array_recherches_in_json,1000);
 }
 
-
 function selectionner_recherche(elt) {
 
 document.getElementById("zone_saisie").value = elt.innerHTML; //on ecrit dans la boxe de saisie la valeur recuperee
@@ -98,12 +97,70 @@ function init() {
 
 
 function rechercher_nouvelles() {
-	//TODO ...
+    document.getElementById("resultats").innerHTML = ""; // on vide les resultats precedents
+
+    document.getElementById("wait").style.display = "block";  // on rend le GIF visisble
+
+    let value_recherche = document.getElementById("zone_saisie").value;
+
+    maj_resultats(value_recherche);
+
 }
 
 
 function maj_resultats(res) {
-	//TODO ...
+    let xhr = new XMLHttpRequest();  // on cree un objet xhr
+
+    let uri =  encodeURIComponent(res); // on encode la valeur recherchee pour proteger les caracteres speciaux
+
+
+    xhr.open("GET", "https://carl-vincent.fr/search-internships.php?data="+uri, true);  // on instancie l'objet avec des valeurs
+
+    xhr.send(null);  //on decleche l'envoi de la requete
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) {
+
+            document.getElementById("wait").style.display = "none";  // on rend le GIF invisisble car on a une reponse du serveur
+
+            let response = []; // on cree l'array list contenant les esultats
+
+            response = JSON.parse(xhr.responseText);  // on parse les contenus JSON et on le stocke dans l'array list
+
+            response.forEach(iteration_fonction);      // on parcourt l'array list avec une boucle for...each
+
+            function iteration_fonction(value,index,array) {
+                let paragaphe = document.createElement("P");  // on cree un element <p>
+                paragaphe.classList.add("titre-recherche");   // on definit sa classe
+
+                let link = document.createElement("a");  // on cree un element <p>
+                link.classList.add("titre-news");     // on definit sa classe
+                link.href = decodeHtmlEntities(value.url); // on definit l'url
+                link.target="_blank";   //on definit son target
+                let text = document.createTextNode(decodeHtmlEntities(value.titre)); // on recupere le titre
+                link.appendChild(text);  // on le met dans la balise <a>
+
+                let span_1= document.createElement("SPAN"); // on cree un element <span>
+                span_1.classList.add("date_news");  // on definit sa classe
+                let date= document.createTextNode(formatDate(value.date)); // on recupere la date
+                span_1.appendChild(date); //on la met dans la balise <span>
+
+                let span_2= document.createElement("SPAN"); // on cree un deuxieme element <span>
+                span_2.classList.add("action_news");  // on definit sa classe
+                span_2.onclick= function () {sauver_nouvelle(this)};  // on definit sa fonction lors d'un cick
+
+                let image = document.createElement("IMG"); // on cree un element <img>
+                image.src="img/horloge15.jpg";  // on definit l'emplacement de l'image
+                span_2.appendChild(image); //on le met dans la balise <span>
+
+                paragaphe.appendChild(link); // on met en premier la balise <a> dans le parent <p>
+                paragaphe.appendChild(span_1); // on met en deuxieme la balise <span> dans le parent <p>
+                paragaphe.appendChild(span_2); // on met en troisieme la deuxieme balise <span> dans le parent <p>
+
+                document.getElementById("resultats").appendChild(paragaphe);  // on met tout dans le fichier html
+            }
+        }
+    };
 }
 
 
