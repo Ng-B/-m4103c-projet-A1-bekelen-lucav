@@ -31,9 +31,17 @@ model.ajouter_recherche = function() {
         let array_recherches_in_json = JSON.stringify(model.recherches);  // on transfome l'array list en format JSON
 
         localStorage.setItem("recherches",array_recherches_in_json);
-
         //setCookie("recherches",array_recherches_in_json,1000);  // on ecrase le cookie existant avec l'array list modifie
 
+        $( function() {
+            $( "#recherche_stockee" + index).draggable();
+            $( "#zone_saisie" ).droppable({
+                drop: function( event, ui ) {
+                    $(this).value = " ";
+                    $(this).value = value;
+                }
+            });
+        } );
     }
 }
 

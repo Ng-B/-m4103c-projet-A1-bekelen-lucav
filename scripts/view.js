@@ -27,6 +27,8 @@ view.maj_resultats = function(res) {
 
             let response = []; // on cree l'array list contenant les resultats
 
+            response.sort(function (a, b) {a.date - b.date});
+
             response = JSON.parse(xhr.responseText);  // on parse les contenus JSON et on le stocke dans l'array list
 
             response.forEach(iteration_fonction);      // on parcourt l'array list avec une boucle for...each

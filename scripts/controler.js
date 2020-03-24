@@ -5,7 +5,7 @@ var controler = {};
 
  controler.selectionner_recherche = function(elt) {
 
-    view.Get_Element("resultats").innerHTML="";
+    view.Get_Element("resultats").innerHTML=""; // on vide la table resultat
 
    view.Get_Element("zone_saisie").value = elt.innerHTML; //on ecrit dans la boxe de saisie la valeur recuperee
 
@@ -83,6 +83,7 @@ controler.init = function() {
          let label = document.createElement("LABEL"); // on cree un element <label>
          label.innerHTML = value; // sa valeur devient la chaine saisie par l'utilisateur
          label.onclick = function(){controler.selectionner_recherche(this)}; // on lui associe la fonction "selectionner_recherche"
+         paragaphe.id = "recherche_stockee" + index;
 
          let image = document.createElement("IMG"); // on cree un element <img>
          image.classList.add("icone-croix");  // on definit sa classe "icone-croix"
@@ -95,7 +96,15 @@ controler.init = function() {
          view.Get_Element("recherches-stockees").appendChild(paragaphe); // on ajoute le paraphe dans le div d'id "recherches-stockees"
          //-------------------------------------------------------------------------------------  //
 
-
+         $( function() {
+            $( "#recherche_stockee" + index).draggable();
+            $( "#zone_saisie" ).droppable({
+               drop: function( event, ui ) {
+                  $(this).value = " ";
+                  $(this).value = value;
+               }
+            });
+         } );
       }
 
    //AMELIORATION N3 : Retour charriot declenche la recherche
@@ -103,12 +112,13 @@ controler.init = function() {
 
       zone_saisie.addEventListener("keyup", function(event) {
          // Numero 13 correspond au bouton "Enter"
-            if (event.keyCode === 13) {
+            if (event.which === 13) {
             event.preventDefault();
             // Declenche la recherche
                view.Get_Element("retour-chariot").click();
          }
       });
+
 
 
    }
